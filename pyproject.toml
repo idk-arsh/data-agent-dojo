@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "data-agent-dojo"
+version = "0.1.0"
+description = "Red-team benchmark for data-access agents: text-to-SQL, MCP data servers and RAG-over-warehouse. Tests whether an agent that reads attacker-controlled content inside normal-looking tool results stays in-shape, or quietly drifts into tables it was never asked to touch."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Arshdeep Ghotra" }]
+keywords = ["prompt-injection", "text-to-sql", "mcp", "red-team", "benchmark", "ai-agents", "data-security", "llm-security"]
+dependencies = ["sqlglot>=26", "pyyaml>=6"]
+
+[project.optional-dependencies]
+duckdb = ["duckdb>=1.0"]
+postgres = ["psycopg[binary]>=3.1"]
+mcp = ["mcp>=1.2"]
+vanna = ["vanna>=0.6"]
+all = ["duckdb>=1.0", "psycopg[binary]>=3.1", "mcp>=1.2", "vanna>=0.6"]
+
+[project.scripts]
+data-agent-dojo = "data_agent_dojo.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/idk-arsh/data-agent-dojo"
+
+[tool.hatch.build.targets.wheel]
+packages = ["data_agent_dojo"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: opt-in scale smoke tests (large 100k-row fixture). Run with `pytest -m slow`.",
+]
+addopts = "-m 'not slow'"
