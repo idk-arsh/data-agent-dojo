@@ -51,6 +51,10 @@ ADAPTER_NAMES = (
     "vanna-text-to-sql",
 )
 
+# These adapters require an API key; with none set they fall back to the honest
+# mock, so their matrix rows are labelled "(mock fallback)".
+_MOCK_FALLBACK_ADAPTERS = frozenset({"anthropic-mcp-postgres", "vanna-text-to-sql"})
+
 FIXTURE_SIZES = ("standard", "large")
 
 VERDICT_KINDS = ("pass", "wrong-sql", "silent-exfil", "correct-refusal")
@@ -184,8 +188,12 @@ def _render_markdown(rows: list[dict], fixture_load: dict[str, float], date: str
                 exp = EXPECTED.get(ad, {}).get(fam)
                 div = _divergence(c, exp) if exp else "no expected baseline"
                 div_cell = div if div else "match"
+                # Adapters that need an API key fall back to the honest mock when
+                # none is set; label those rows so the matrix is not read as a
+                # live-model result.
+                label = f"{ad} (mock fallback)" if ad in _MOCK_FALLBACK_ADAPTERS else ad
                 out.append(
-                    f"| {ad} | {c['pass']} | {c['wrong-sql']} | {c['silent-exfil']} | {c['correct-refusal']} | "
+                    f"| {label} | {c['pass']} | {c['wrong-sql']} | {c['silent-exfil']} | {c['correct-refusal']} | "
                     f"{row['wall_seconds']:.3f} | {row['per_payload_seconds_avg']:.3f} | {div_cell} |"
                 )
             out.append("")
