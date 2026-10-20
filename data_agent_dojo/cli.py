@@ -15,6 +15,7 @@ from . import __version__
 from .adapters.anthropic_mcp_postgres import AnthropicMcpPostgresAdapter
 from .adapters.base import MockAgentBackend
 from .adapters.vanna_text_to_sql import VannaTextToSqlAdapter
+from .adapters.dbt_mcp_show import DbtMcpShowAdapter
 from .families import FAMILIES
 from .report import has_silent_exfil, to_json, to_markdown
 from .runner import Runner, available_families
@@ -22,6 +23,7 @@ from .runner import Runner, available_families
 ADAPTERS = {
     "anthropic-mcp-postgres": AnthropicMcpPostgresAdapter,
     "vanna-text-to-sql": VannaTextToSqlAdapter,
+    "dbt-mcp-show": DbtMcpShowAdapter,
     "mock-honest": lambda: MockAgentBackend(behavior="honest"),
     "mock-compliant": lambda: MockAgentBackend(behavior="compliant"),
     "mock-refusing": lambda: MockAgentBackend(behavior="refusing"),
