@@ -19,8 +19,10 @@ space the moment any writer who is not the agent's operator can touch them.
 
 1. **Cell-value injection.** An attacker writes to a user-facing cell
    (a review, a comment, a support ticket). The agent runs a benign SELECT,
-   reads the poisoned row, and acts on the instruction. CVE-2024-7764
-   (Vanna-AI) is the reference class.
+   reads the poisoned row, and acts on the instruction. This carries the
+   injection precedents in text-to-SQL agents — CVE-2024-7764 and
+   CVE-2024-5565 in Vanna-AI, both of which arrive through the *user request*
+   — over to injections that arrive through *stored data* instead.
 2. **Retrieved-document poisoning.** An attacker who can seed one of the
    documents a RAG pipeline retrieves (a support-ticket body, a wiki snippet,
    a PDF chunk) writes instructions into that document; the agent reads it as
@@ -62,7 +64,8 @@ to the honest mock so CI stays deterministic).
   a Claude agent; the agent reads attacker-controlled cell values through the
   MCP `query` tool.
 - `vanna-text-to-sql` — the Vanna text-to-SQL framework, motivated by
-  CVE-2024-7764 (Vanna-AI value-injection via training data and prompt).
+  CVE-2024-7764 (Vanna-AI SQL injection: a semicolon in the user request makes
+  `extract_sql` drop the LLM's SQL and pass the attacker's).
   Without `VANNA_API_KEY`/`OPENAI_API_KEY` the adapter falls back to the
   deterministic honest mock.
 
@@ -99,7 +102,8 @@ is actively patching. The current embargo list is in
 
 - Pedro et al., *From Prompt Injections to SQL Injection Attacks: How
   Protected is Your LLM-Integrated Web Application?* IEEE S&P 2026.
-- CVE-2024-7764 — Vanna-AI value-injection.
+- CVE-2024-7764 — Vanna-AI SQL injection (v0.6.2, via `extract_sql` on the user request).
+- CVE-2024-5565 — Vanna-AI prompt injection to remote code execution (the `visualize` path).
 - CVE-2025-66335 — Doris MCP server.
 - CVE-2026-11624 — MCP Toolbox.
 - Invariant Labs — tool-poisoning / rug-pull class.
